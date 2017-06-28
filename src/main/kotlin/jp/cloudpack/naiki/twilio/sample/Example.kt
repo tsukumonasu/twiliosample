@@ -1,22 +1,27 @@
 package jp.cloudpack.naiki.twilio.sample
-
+import com.amazonaws.services.lambda.runtime.Context
 import java.net.URI
 
 import com.twilio.Twilio
 import com.twilio.rest.api.v2010.account.Call
 import com.twilio.type.PhoneNumber
 
-fun main(args: Array<String>) {
+class App {
 
     val ACCOUNT_SID = "your accunt"
     val AUTH_TOKEN = "your token"
 
-    Twilio.init(ACCOUNT_SID, AUTH_TOKEN)
+    fun handler(count: Int, context: Context): String {
 
-    val call = Call.creator(
-            PhoneNumber("+8180XXXXXXXX"), // to   080-XXXX-XXXX
-            PhoneNumber("+8150XXXXXXXX"), // from 050-XXXX-XXXX
-            URI("http://demo.twilio.com/docs/voice.xml")).create()
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN)
 
-    println(call.sid)
+        val call = Call.creator(
+                PhoneNumber("+8180XXXXXXXX"), // to   080-XXXX-XXXX
+                PhoneNumber("+8150XXXXXXXX"), // from 050-XXXX-XXXX
+                URI("http://demo.twilio.com/docs/voice.xml")).create()
+
+        val lambdaLogger = context.logger
+        lambdaLogger.log(count.toString() + "result = " + call.toString())
+        return call.toString()
+    }
 }
